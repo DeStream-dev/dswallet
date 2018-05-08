@@ -79,11 +79,11 @@ mkdir miniupnpc
 cp *.h miniupnpc/
 
 DeStream Wallet
--------
+---------------
 MSYS shell:
-cd /c/msys64/DeStream-X/src/leveldb
+cd /c/msys64/dswallet/src/leveldb
 TARGET_OS=OS_WINDOWS_CROSSCOMPILE make
 DOS prompt:
-cd \DeStream-X\src
+cd \dswallet\src
 mingw32-make -f makefile.mingw
 strip destreamd.exe

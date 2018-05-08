@@ -174,6 +174,8 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
 //        vSeeds.push_back(CDNSSeedData("stratisplatform.com", "testnode1.stratisplatform.com"));
+//        vSeeds.push_back(CDNSSeedData("localhost", "localhost"));
+
         vSeeds.push_back(CDNSSeedData("Seednode1", "peak-srv-12.qb-systems.ru"));
         vSeeds.push_back(CDNSSeedData("Seednode2", "peak-srv-16.qb-systems.ru"));
         vSeeds.push_back(CDNSSeedData("Seednode3", "peak-srv-17.qb-systems.ru"));
