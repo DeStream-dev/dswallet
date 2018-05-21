@@ -2747,7 +2747,7 @@ alertnotify=echo %%s | mail -s &quot;Stratis Alert&quot; admin@foo.com
     </message>
     <message>
         <location line="+5"/>
-        <source>Listen for connections on &lt;port&gt; (default: 16178 or testnet: 25714)</source>
+        <source>Listen for connections on &lt;port&gt;</source>
         <translation>监听&lt;port&gt;端口的连接 (默认: 16178 测试网: 25714)</translation>
     </message>
     <message>

@@ -2749,7 +2749,7 @@ napríklad: alertnotify=echo %%s | mail -s &quot;Stratis upozornenie&quot; admin
     </message>
     <message>
         <location line="+5"/>
-        <source>Listen for connections on &lt;port&gt; (default: 16178 or testnet: 25714)</source>
+        <source>Listen for connections on &lt;port&gt;</source>
         <translation>Počúvať pripojenia na &lt;port&gt; (predvolené: 16178 alebo testovacia sieť: 25714)</translation>
     </message>
     <message>

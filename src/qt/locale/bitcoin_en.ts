@@ -2754,8 +2754,8 @@ for example: alertnotify=echo %%s | mail -s &quot;Stratis Alert&quot; admin@foo.
     </message>
     <message>
         <location line="+5"/>
-        <source>Listen for connections on &lt;port&gt; (default: 16178 or testnet: 25714)</source>
-        <translation>Listen for connections on &lt;port&gt; (default: 16178 or testnet: 25714)</translation>
+        <source>Listen for connections on &lt;port&gt;</source>
+        <translation>Listen for connections on &lt;port&gt;</translation>
     </message>
     <message>
         <location line="+1"/>
