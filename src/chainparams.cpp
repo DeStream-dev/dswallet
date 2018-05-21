@@ -109,14 +109,8 @@ public:
         assert(hashGenesisBlock == uint256("0x0000066e91e46e5a264d42c89e1204963b2ee6be230b443e9159020539d972af"));
         assert(genesis.hashMerkleRoot == uint256("0x65a26bc20b0351aebf05829daefa8f7db2f800623439f3c114257c91447f1518"));
 
-//        vSeeds.push_back(CDNSSeedData("Seednode1", "seednode1.stratisplatform.com"));
-//        vSeeds.push_back(CDNSSeedData("Seednode2", "seednode2.stratis.cloud"));
-//        vSeeds.push_back(CDNSSeedData("Seednode3", "seednode3.stratisplatform.com"));
-//        vSeeds.push_back(CDNSSeedData("Seednode4", "seednode4.stratis.cloud"));
-
-        vSeeds.push_back(CDNSSeedData("Seednode1", "peak-srv-12.qb-systems.ru"));
-        vSeeds.push_back(CDNSSeedData("Seednode2", "peak-srv-16.qb-systems.ru"));
-        vSeeds.push_back(CDNSSeedData("Seednode3", "peak-srv-17.qb-systems.ru"));
+        vSeeds.push_back(CDNSSeedData("Node1", "node1.destream.io"));
+        vSeeds.push_back(CDNSSeedData("Node2", "node2.destream.io"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 63);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 125);
@@ -173,12 +167,7 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-//        vSeeds.push_back(CDNSSeedData("stratisplatform.com", "testnode1.stratisplatform.com"));
-//        vSeeds.push_back(CDNSSeedData("localhost", "localhost"));
-
-        vSeeds.push_back(CDNSSeedData("Seednode1", "peak-srv-12.qb-systems.ru"));
-        vSeeds.push_back(CDNSSeedData("Seednode2", "peak-srv-16.qb-systems.ru"));
-        vSeeds.push_back(CDNSSeedData("Seednode3", "peak-srv-17.qb-systems.ru"));
+        vSeeds.push_back(CDNSSeedData("Testnode1", "testnode1.destream.io"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 65); // stratis test net start with T
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 196);
