@@ -8,7 +8,7 @@
 #include "chainparams.h"
 #include "main.h"
 #include "util.h"
-
+#include "base58.h"
 #include <boost/assign/list_of.hpp>
 
 using namespace boost::assign;
@@ -66,8 +66,12 @@ static void convertSeed6(std::vector<CAddress> &vSeedsOut, const SeedSpec6 *data
 }
 
 class CMainParams : public CChainParams {
+
 public:
     CMainParams() {
+        const string InitialWalletAddress = "TPPL2wmtxGzP8U6hQsGkRA9yCMsazB33ft";
+        const int64_t InitialCoins = 600000000000000000;
+        const int NumberOfEmissionTransactions = 6;
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
         // a large 4-byte int at any alignment.
@@ -89,25 +93,11 @@ public:
         //    CTxOut(empty)
         //  vMerkleTree: 12630d16a9
         const char* pszTimestamp = "http://www.theonion.com/article/olympics-head-priestess-slits-throat-official-rio--53466";
-        std::vector<CTxIn> vin;
-        vin.resize(1);
-        vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-        std::vector<CTxOut> vout;
-        vout.resize(1);
-        vout[0].SetEmpty();
-        CTransaction txNew(1, 1470467000, vin, vout, 0);
-        genesis.vtx.push_back(txNew);
-        genesis.hashPrevBlock = 0;
-        genesis.hashMerkleRoot = genesis.BuildMerkleTree();
-        genesis.nVersion = 1;
-        genesis.nTime    = 1470467000;
-        genesis.nBits    = bnProofOfWorkLimit.GetCompact();
-        genesis.nNonce   = 1831645;
 
-        hashGenesisBlock = genesis.GetHash();
+        hashGenesisBlock = Genesis.GetHash();
 
-        assert(hashGenesisBlock == uint256("0x0000066e91e46e5a264d42c89e1204963b2ee6be230b443e9159020539d972af"));
-        assert(genesis.hashMerkleRoot == uint256("0x65a26bc20b0351aebf05829daefa8f7db2f800623439f3c114257c91447f1518"));
+        //assert(hashGenesisBlock == uint256("0x0000066e91e46e5a264d42c89e1204963b2ee6be230b443e9159020539d972af"));
+        //assert(genesis.hashMerkleRoot == uint256("0x65a26bc20b0351aebf05829daefa8f7db2f800623439f3c114257c91447f1518"));
 
         vSeeds.push_back(CDNSSeedData("Node1", "node1.destream.io"));
         vSeeds.push_back(CDNSSeedData("Node2", "node2.destream.io"));
@@ -123,15 +113,46 @@ public:
         nLastPOWBlock = 12500;
     }
 
-    virtual const CBlock& GenesisBlock() const { return genesis; }
+    virtual const CBlock& GenesisBlock() const { return Genesis; }
     virtual Network NetworkID() const { return CChainParams::MAIN; }
 
     virtual const vector<CAddress>& FixedSeeds() const {
         return vFixedSeeds;
     }
 protected:
-    CBlock genesis;
+    CBlock Genesis;
     vector<CAddress> vFixedSeeds;
+    CBlock CreateDeStreamGenesisBlock(unsigned int nTime, unsigned int nNonce,
+                                      unsigned int nBits, int nVersion, int64_t initialCoins, string initialWalletAddress,
+                                      unsigned int numberOfEmissionTransactions){
+        CBlock genesis;
+        const char* pszTimestamp = "DESTREAM IS THE FIRST DECENTRALIZED GLOBAL FINANCIAL ECOSYSTEM FOR STREAMERS";
+        std::vector<CTxIn> vin;
+        vin.resize(1);
+        vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+        std::vector<CTxOut> vout;
+        //vout.resize(1);
+        vout.resize(numberOfEmissionTransactions+1);
+        vout[0].nValue=0;
+        vout[0].scriptPubKey=CScript();
+        for(int i=1;i<=numberOfEmissionTransactions;i++){
+            vout[i].nValue=initialCoins/numberOfEmissionTransactions;
+            vout[i].scriptPubKey.SetDestination(CBitcoinAddress(initialWalletAddress).Get());
+        }
+
+        CTransaction txNew(1, 1470467000, vin, vout, 0);
+        genesis.hashPrevBlock = 0;
+        genesis.nTime = nTime;
+        genesis.vtx.push_back(txNew);
+        genesis.nBits  = nBits;
+        genesis.nNonce = nNonce;
+        genesis.nVersion = nVersion;
+        genesis.hashMerkleRoot = genesis.BuildMerkleTree();
+        hashGenesisBlock = genesis.GetHash();
+        string _str = genesis.GetHash().ToString();
+        return genesis;
+
+    }
 };
 static CMainParams mainParams;
 
@@ -143,6 +164,10 @@ static CMainParams mainParams;
 class CTestNetParams : public CMainParams {
 public:
     CTestNetParams() {
+        const string InitialWalletAddress = "TAE5v2wDwkrCPTDN51ru4YSZ8KvnFFrUQc";
+        const int64_t InitialCoins = 600000000000000000;
+        const int NumberOfEmissionTransactions = 6;
+
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
         // a large 4-byte int at any alignment.
@@ -155,29 +180,24 @@ public:
         nDefaultPort = 0xDE11;
         nRPCPort = 0xDE10;
 
-        strDataDir = "testnet";
-        // Modify the testnet genesis block so the timestamp is valid for a later start.
-        genesis.nBits  = bnProofOfWorkLimit.GetCompact();
-        genesis.nNonce = 2433759;
-        genesis.nTime    = 1493909211;
-  
-        hashGenesisBlock = genesis.GetHash();
-         
-        assert(hashGenesisBlock == uint256("0x00000e246d7b73b88c9ab55f2e5e94d9e22d471def3df5ea448f5576b1d156b9"));
-
-        vFixedSeeds.clear();
-        vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("Testnode1", "testnode1.destream.io"));
-        vSeeds.push_back(CDNSSeedData("Testnode2", "40.121.9.206"));
-
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 65); // stratis test net start with T
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 196);
         base58Prefixes[SECRET_KEY]     = std::vector<unsigned char>(1, 65 + 128);
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x35)(0x87)(0xCF).convert_to_container<std::vector<unsigned char> >();
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >();
 
+        strDataDir = "testnet";
+        unsigned int nTime = 1537794780;
+        unsigned int nNonce = 2433759;
+        unsigned int nBits = 520159231;
+        int nVersion = 1;
+        Genesis = CreateDeStreamGenesisBlock(nTime, nNonce, nBits, nVersion, InitialCoins, InitialWalletAddress, NumberOfEmissionTransactions);
+        //assert(hashGenesisBlock == uint256("0x00000e246d7b73b88c9ab55f2e5e94d9e22d471def3df5ea448f5576b1d156b9"));
+        vFixedSeeds.clear();
+        vSeeds.clear();
+        vSeeds.push_back(CDNSSeedData("Testnode1", "testnode1.destream.io"));
+        vSeeds.push_back(CDNSSeedData("Testnode2", "40.121.9.206"));
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
-
         nLastPOWBlock = 0x7fffffff;
     }
     virtual Network NetworkID() const { return CChainParams::TESTNET; }
@@ -196,14 +216,14 @@ public:
         pchMessageStart[2] = 0xb5;
         pchMessageStart[3] = 0xda;
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 1);
-        genesis.nTime = 1411111111;
-        genesis.nBits  = bnProofOfWorkLimit.GetCompact();
-        genesis.nNonce = 1659424;
-        hashGenesisBlock = genesis.GetHash();
+        Genesis.nTime = 1411111111;
+        Genesis.nBits  = bnProofOfWorkLimit.GetCompact();
+        Genesis.nNonce = 1659424;
+        hashGenesisBlock = Genesis.GetHash();
         nDefaultPort = 18444;
         strDataDir = "regtest";
 //        MineGenesis(genesis);
-        assert(hashGenesisBlock == uint256("0x00000d97ffc6d5e27e78954c5bf9022b081177756488f44780b4f3c2210b1645"));
+        //assert(hashGenesisBlock == uint256("0x00000d97ffc6d5e27e78954c5bf9022b081177756488f44780b4f3c2210b1645"));
 
         vSeeds.clear();  // Regtest mode doesn't have any DNS seeds.
     }
@@ -213,7 +233,8 @@ public:
 };
 static CRegTestParams regTestParams;
 
-static CChainParams *pCurrentParams = &mainParams;
+//static CChainParams *pCurrentParams = &mainParams;
+static CChainParams *pCurrentParams = &testNetParams;
 
 const CChainParams &Params() {
     return *pCurrentParams;
