@@ -69,7 +69,17 @@ class CMainParams : public CChainParams {
 
 public:
     CMainParams() {
-        const string InitialWalletAddress = "TPPL2wmtxGzP8U6hQsGkRA9yCMsazB33ft";
+        std::list<string> initialWalletAddresses;
+        initialWalletAddresses.push_back("TWyLf11aUSQvorSvG4oc3asMGXbqkf8MEa");
+        initialWalletAddresses.push_back("TSX8RGmEod8K4a2SvPPWZtmJ5KtrBzzXSw");
+        initialWalletAddresses.push_back("TTp1D1NrV1uwbuL2YvWm46M3xY8nYQLRHr");
+        initialWalletAddresses.push_back("TBgvA3dKhGMGeWXpzCG9UUviXLFjZjsQ2S");
+        initialWalletAddresses.push_back("TV37E8whdDUEzVFSsWRHHcj7bWbeDTv9gw");
+        initialWalletAddresses.push_back("TWyiGrPmuKvcMj9s9SGR4BWzMxhZQXJxZk");
+        initialWalletAddresses.push_back("TNL98Epf3ASKFod2QuincwNi2CxHLkkjMD");
+        initialWalletAddresses.push_back("TG3N5ARtJaajqdNHgC9pxnW5kL9CeWkcDa");
+        initialWalletAddresses.push_back("TA9GwihBb9KcW3evjxdVkUh1XdQ5wbEcif");
+        initialWalletAddresses.push_back("TBxudKvSsw1hL7aGf9a34dSdxV4e97dx5y");
         const int64_t InitialCoins = 600000000000000000;
         const int NumberOfEmissionTransactions = 6;
         // The message start string is designed to be unlikely to occur in normal data.
@@ -123,7 +133,8 @@ protected:
     CBlock Genesis;
     vector<CAddress> vFixedSeeds;
     CBlock CreateDeStreamGenesisBlock(unsigned int nTime, unsigned int nNonce,
-                                      unsigned int nBits, int nVersion, int64_t initialCoins, string initialWalletAddress,
+                                      unsigned int nBits, int nVersion, int64_t initialCoins,
+                                      std::list<string>& initialWalletAddresses,
                                       unsigned int numberOfEmissionTransactions){
         CBlock genesis;
         const char* pszTimestamp = "DESTREAM IS THE FIRST DECENTRALIZED GLOBAL FINANCIAL ECOSYSTEM FOR STREAMERS";
@@ -131,16 +142,15 @@ protected:
         vin.resize(1);
         vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
         std::vector<CTxOut> vout;
-        //vout.resize(1);
-        vout.resize(numberOfEmissionTransactions+1);
-        vout[0].nValue=0;
-        vout[0].scriptPubKey=CScript();
-        for(int i=1;i<=numberOfEmissionTransactions;i++){
-            vout[i].nValue=initialCoins/numberOfEmissionTransactions;
-            vout[i].scriptPubKey.SetDestination(CBitcoinAddress(initialWalletAddress).Get());
+        vout.resize(initialWalletAddresses.size());
+        int i = 0;
+        BOOST_FOREACH(string  dest, initialWalletAddresses){
+            vout[i].nValue=initialCoins/initialWalletAddresses.size();
+            vout[i].scriptPubKey.SetDestination(CBitcoinAddress(dest).Get());
+            i++;
         }
-
         CTransaction txNew(1, 1470467000, vin, vout, 0);
+
         genesis.hashPrevBlock = 0;
         genesis.nTime = nTime;
         genesis.vtx.push_back(txNew);
@@ -149,7 +159,7 @@ protected:
         genesis.nVersion = nVersion;
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         hashGenesisBlock = genesis.GetHash();
-        string _str = genesis.GetHash().ToString();
+
         return genesis;
 
     }
@@ -164,7 +174,17 @@ static CMainParams mainParams;
 class CTestNetParams : public CMainParams {
 public:
     CTestNetParams() {
-        const string InitialWalletAddress = "TAE5v2wDwkrCPTDN51ru4YSZ8KvnFFrUQc";
+        std::list<string> initialWalletAddresses;
+        initialWalletAddresses.push_back("TWyLf11aUSQvorSvG4oc3asMGXbqkf8MEa");
+        initialWalletAddresses.push_back("TSX8RGmEod8K4a2SvPPWZtmJ5KtrBzzXSw");
+        initialWalletAddresses.push_back("TTp1D1NrV1uwbuL2YvWm46M3xY8nYQLRHr");
+        initialWalletAddresses.push_back("TBgvA3dKhGMGeWXpzCG9UUviXLFjZjsQ2S");
+        initialWalletAddresses.push_back("TV37E8whdDUEzVFSsWRHHcj7bWbeDTv9gw");
+        initialWalletAddresses.push_back("TWyiGrPmuKvcMj9s9SGR4BWzMxhZQXJxZk");
+        initialWalletAddresses.push_back("TNL98Epf3ASKFod2QuincwNi2CxHLkkjMD");
+        initialWalletAddresses.push_back("TG3N5ARtJaajqdNHgC9pxnW5kL9CeWkcDa");
+        initialWalletAddresses.push_back("TA9GwihBb9KcW3evjxdVkUh1XdQ5wbEcif");
+        initialWalletAddresses.push_back("TBxudKvSsw1hL7aGf9a34dSdxV4e97dx5y");
         const int64_t InitialCoins = 600000000000000000;
         const int NumberOfEmissionTransactions = 6;
 
@@ -191,8 +211,9 @@ public:
         unsigned int nNonce = 2433759;
         unsigned int nBits = 520159231;
         int nVersion = 1;
-        Genesis = CreateDeStreamGenesisBlock(nTime, nNonce, nBits, nVersion, InitialCoins, InitialWalletAddress, NumberOfEmissionTransactions);
+        Genesis = CreateDeStreamGenesisBlock(nTime, nNonce, nBits, nVersion, InitialCoins, initialWalletAddresses, NumberOfEmissionTransactions);
         //assert(hashGenesisBlock == uint256("0x00000e246d7b73b88c9ab55f2e5e94d9e22d471def3df5ea448f5576b1d156b9"));
+        string _str = Genesis.GetHash().ToString();
         vFixedSeeds.clear();
         vSeeds.clear();
         vSeeds.push_back(CDNSSeedData("Testnode1", "testnode1.destream.io"));
