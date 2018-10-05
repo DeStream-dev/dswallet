@@ -53,6 +53,8 @@ public:
         MAX_BASE58_TYPES
     };
 
+    const std::list<string> ListInitialWalletAddresses() const { return initialWalletAddresses; }
+    const int64_t InitialCoins() const { return initialCoins; }
     const uint256& HashGenesisBlock() const { return hashGenesisBlock; }
     const MessageStartChars& MessageStart() const { return pchMessageStart; }
     const vector<unsigned char>& AlertKey() const { return vAlertPubKey; }
@@ -70,6 +72,9 @@ public:
     int LastPOWBlock() const { return nLastPOWBlock; }
 protected:
     CChainParams() {};
+
+    std::list<string> initialWalletAddresses;
+    const int64_t initialCoins = 600000000000000000;
 
     uint256 hashGenesisBlock;
     MessageStartChars pchMessageStart;

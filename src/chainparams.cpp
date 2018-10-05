@@ -69,19 +69,18 @@ class CMainParams : public CChainParams {
 
 public:
     CMainParams() {
-        std::list<string> initialWalletAddresses;
-        initialWalletAddresses.push_back("TWyLf11aUSQvorSvG4oc3asMGXbqkf8MEa");
-        initialWalletAddresses.push_back("TSX8RGmEod8K4a2SvPPWZtmJ5KtrBzzXSw");
-        initialWalletAddresses.push_back("TTp1D1NrV1uwbuL2YvWm46M3xY8nYQLRHr");
-        initialWalletAddresses.push_back("TBgvA3dKhGMGeWXpzCG9UUviXLFjZjsQ2S");
-        initialWalletAddresses.push_back("TV37E8whdDUEzVFSsWRHHcj7bWbeDTv9gw");
-        initialWalletAddresses.push_back("TWyiGrPmuKvcMj9s9SGR4BWzMxhZQXJxZk");
-        initialWalletAddresses.push_back("TNL98Epf3ASKFod2QuincwNi2CxHLkkjMD");
-        initialWalletAddresses.push_back("TG3N5ARtJaajqdNHgC9pxnW5kL9CeWkcDa");
-        initialWalletAddresses.push_back("TA9GwihBb9KcW3evjxdVkUh1XdQ5wbEcif");
-        initialWalletAddresses.push_back("TBxudKvSsw1hL7aGf9a34dSdxV4e97dx5y");
-        const int64_t InitialCoins = 600000000000000000;
-        const int NumberOfEmissionTransactions = 6;
+        initialWalletAddresses.clear();
+        initialWalletAddresses.push_back("TD3vSxiCtbfjXfWBh4HGkoypsMdX3p3HpR");
+        initialWalletAddresses.push_back("TB1RVz5fWUEMm8s1KaE3f1zMqT1P819LT2");
+        initialWalletAddresses.push_back("TQnaBUmFrnU46BWtNURi1pg6EPKnrogXcs");
+        initialWalletAddresses.push_back("TUHhaye7Ks8CsJDe4pF9x7jLT6fbo3TTih");
+        initialWalletAddresses.push_back("TEHwhS6oNovBwWCcdVcJxJi3KNmk97Nwv2");
+        initialWalletAddresses.push_back("TDhbxfchw81DYbkF6XtJ19SoB6EGWRvBSu");
+        initialWalletAddresses.push_back("TWV8c8fM6ZXPrKDw8RkGHEq6dXKS3JqXjA");
+        initialWalletAddresses.push_back("TVPs9RRH7SmnzZxzar29zMEsKhdHUwzSEH");
+        initialWalletAddresses.push_back("TCewWzDn69Q4eqjspzBKiW4re9B13mLeSV");
+        initialWalletAddresses.push_back("THQhux6atXEiKaGcpES8KNiuQZmABnebgy");
+        //const int64_t InitialCoins = 600000000000000000;
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
         // a large 4-byte int at any alignment.
@@ -123,6 +122,7 @@ public:
         nLastPOWBlock = 12500;
     }
 
+    virtual const std::list<string> ListInitialWalletAddresses() const { return initialWalletAddresses; }
     virtual const CBlock& GenesisBlock() const { return Genesis; }
     virtual Network NetworkID() const { return CChainParams::MAIN; }
 
@@ -133,9 +133,7 @@ protected:
     CBlock Genesis;
     vector<CAddress> vFixedSeeds;
     CBlock CreateDeStreamGenesisBlock(unsigned int nTime, unsigned int nNonce,
-                                      unsigned int nBits, int nVersion, int64_t initialCoins,
-                                      std::list<string>& initialWalletAddresses,
-                                      unsigned int numberOfEmissionTransactions){
+                                      unsigned int nBits, int nVersion){
         CBlock genesis;
         const char* pszTimestamp = "DESTREAM IS THE FIRST DECENTRALIZED GLOBAL FINANCIAL ECOSYSTEM FOR STREAMERS";
         std::vector<CTxIn> vin;
@@ -144,13 +142,13 @@ protected:
         std::vector<CTxOut> vout;
         vout.resize(initialWalletAddresses.size());
         int i = 0;
+        int64_t test =InitialCoins()/ListInitialWalletAddresses().size();
         BOOST_FOREACH(string  dest, initialWalletAddresses){
-            vout[i].nValue=initialCoins/initialWalletAddresses.size();
+            vout[i].nValue=InitialCoins()/ListInitialWalletAddresses().size();
             vout[i].scriptPubKey.SetDestination(CBitcoinAddress(dest).Get());
             i++;
         }
-        CTransaction txNew(1, 1470467000, vin, vout, 0);
-
+        CTransaction txNew(1, 1538662636, vin, vout, 0);
         genesis.hashPrevBlock = 0;
         genesis.nTime = nTime;
         genesis.vtx.push_back(txNew);
@@ -159,7 +157,6 @@ protected:
         genesis.nVersion = nVersion;
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         hashGenesisBlock = genesis.GetHash();
-
         return genesis;
 
     }
@@ -174,19 +171,17 @@ static CMainParams mainParams;
 class CTestNetParams : public CMainParams {
 public:
     CTestNetParams() {
-        std::list<string> initialWalletAddresses;
-        initialWalletAddresses.push_back("TWyLf11aUSQvorSvG4oc3asMGXbqkf8MEa");
-        initialWalletAddresses.push_back("TSX8RGmEod8K4a2SvPPWZtmJ5KtrBzzXSw");
-        initialWalletAddresses.push_back("TTp1D1NrV1uwbuL2YvWm46M3xY8nYQLRHr");
-        initialWalletAddresses.push_back("TBgvA3dKhGMGeWXpzCG9UUviXLFjZjsQ2S");
-        initialWalletAddresses.push_back("TV37E8whdDUEzVFSsWRHHcj7bWbeDTv9gw");
-        initialWalletAddresses.push_back("TWyiGrPmuKvcMj9s9SGR4BWzMxhZQXJxZk");
-        initialWalletAddresses.push_back("TNL98Epf3ASKFod2QuincwNi2CxHLkkjMD");
-        initialWalletAddresses.push_back("TG3N5ARtJaajqdNHgC9pxnW5kL9CeWkcDa");
-        initialWalletAddresses.push_back("TA9GwihBb9KcW3evjxdVkUh1XdQ5wbEcif");
-        initialWalletAddresses.push_back("TBxudKvSsw1hL7aGf9a34dSdxV4e97dx5y");
-        const int64_t InitialCoins = 600000000000000000;
-        const int NumberOfEmissionTransactions = 6;
+        initialWalletAddresses.clear();
+        initialWalletAddresses.push_back("TD3vSxiCtbfjXfWBh4HGkoypsMdX3p3HpR");
+        initialWalletAddresses.push_back("TB1RVz5fWUEMm8s1KaE3f1zMqT1P819LT2");
+        initialWalletAddresses.push_back("TQnaBUmFrnU46BWtNURi1pg6EPKnrogXcs");
+        initialWalletAddresses.push_back("TUHhaye7Ks8CsJDe4pF9x7jLT6fbo3TTih");
+        initialWalletAddresses.push_back("TEHwhS6oNovBwWCcdVcJxJi3KNmk97Nwv2");
+        initialWalletAddresses.push_back("TDhbxfchw81DYbkF6XtJ19SoB6EGWRvBSu");
+        initialWalletAddresses.push_back("TWV8c8fM6ZXPrKDw8RkGHEq6dXKS3JqXjA");
+        initialWalletAddresses.push_back("TVPs9RRH7SmnzZxzar29zMEsKhdHUwzSEH");
+        initialWalletAddresses.push_back("TCewWzDn69Q4eqjspzBKiW4re9B13mLeSV");
+        initialWalletAddresses.push_back("THQhux6atXEiKaGcpES8KNiuQZmABnebgy");
 
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -207,13 +202,12 @@ public:
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >();
 
         strDataDir = "testnet";
-        unsigned int nTime = 1537794780;
+        unsigned int nTime = 1538662636;
         unsigned int nNonce = 2433759;
         unsigned int nBits = 520159231;
         int nVersion = 1;
-        Genesis = CreateDeStreamGenesisBlock(nTime, nNonce, nBits, nVersion, InitialCoins, initialWalletAddresses, NumberOfEmissionTransactions);
-        //assert(hashGenesisBlock == uint256("0x00000e246d7b73b88c9ab55f2e5e94d9e22d471def3df5ea448f5576b1d156b9"));
-        string _str = Genesis.GetHash().ToString();
+        Genesis = CreateDeStreamGenesisBlock(nTime, nNonce, nBits, nVersion);
+        assert(hashGenesisBlock == uint256("0xac5e9afbc85e67ea5edf0116b96910526d75662ee833a70163cb3b4a6d2423e8"));
         vFixedSeeds.clear();
         vSeeds.clear();
         vSeeds.push_back(CDNSSeedData("Testnode1", "testnode1.destream.io"));
@@ -221,6 +215,7 @@ public:
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
         nLastPOWBlock = 0x7fffffff;
     }
+
     virtual Network NetworkID() const { return CChainParams::TESTNET; }
 };
 static CTestNetParams testNetParams;
