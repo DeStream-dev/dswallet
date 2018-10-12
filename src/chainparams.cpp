@@ -70,16 +70,16 @@ class CMainParams : public CChainParams {
 public:
     CMainParams() {
         initialWalletAddresses.clear();
-        initialWalletAddresses.push_back("TD3vSxiCtbfjXfWBh4HGkoypsMdX3p3HpR");
-        initialWalletAddresses.push_back("TB1RVz5fWUEMm8s1KaE3f1zMqT1P819LT2");
-        initialWalletAddresses.push_back("TQnaBUmFrnU46BWtNURi1pg6EPKnrogXcs");
-        initialWalletAddresses.push_back("TUHhaye7Ks8CsJDe4pF9x7jLT6fbo3TTih");
-        initialWalletAddresses.push_back("TEHwhS6oNovBwWCcdVcJxJi3KNmk97Nwv2");
-        initialWalletAddresses.push_back("TDhbxfchw81DYbkF6XtJ19SoB6EGWRvBSu");
-        initialWalletAddresses.push_back("TWV8c8fM6ZXPrKDw8RkGHEq6dXKS3JqXjA");
-        initialWalletAddresses.push_back("TVPs9RRH7SmnzZxzar29zMEsKhdHUwzSEH");
-        initialWalletAddresses.push_back("TCewWzDn69Q4eqjspzBKiW4re9B13mLeSV");
-        initialWalletAddresses.push_back("THQhux6atXEiKaGcpES8KNiuQZmABnebgy");
+        initialWalletAddresses.push_back("DSjHXyKyLohMfAqgCysExqd5DiFh29tqv1");
+        initialWalletAddresses.push_back("DHuGPft3AdTgkYi968dxP2u8ogxCMi8BS2");
+        initialWalletAddresses.push_back("DMq4LzAP1HENXQspfLdcP7kG7RBkhaxgPy");
+        initialWalletAddresses.push_back("DPWqhQg2Dx9RHS19jQpU1PXdEtAfzQqwPZ");
+        initialWalletAddresses.push_back("DNFXhZUmM6BrB9u47jDJvP85LbroH2T1CG");
+        initialWalletAddresses.push_back("DHFj5Su8Mo2yfqYCEUKWMYL3u478CKUtxR");
+        initialWalletAddresses.push_back("DBMKqJV3kJh8bhjvFd4hDAUpgLTtRxQsHu");
+        initialWalletAddresses.push_back("DCeWkRsA443etVaKx3bDuJvmEp1PDnxDqt");
+        initialWalletAddresses.push_back("DECLdDB4j4FUmvq6eM4bXGimRUijR5ogwa");
+        initialWalletAddresses.push_back("DR9wL3g6yR6kds4WnHweL76GGfbxysuPhu");
         //const int64_t InitialCoins = 600000000000000000;
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -111,12 +111,11 @@ public:
         vSeeds.push_back(CDNSSeedData("Node1", "node1.destream.io"));
         vSeeds.push_back(CDNSSeedData("Node2", "node2.destream.io"));
 
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 63);
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 125);
-        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1, (63+128));
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 30);
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 90);
+        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1, (30+98));
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xC2)(0x1E).convert_to_container<std::vector<unsigned char> >();
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0xDD).convert_to_container<std::vector<unsigned char> >();
-
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
         nLastPOWBlock = 12500;
@@ -148,7 +147,7 @@ protected:
             vout[i].scriptPubKey.SetDestination(CBitcoinAddress(dest).Get());
             i++;
         }
-        CTransaction txNew(1, 1538662636, vin, vout, 0);
+        CTransaction txNew(1, nTime, vin, vout, 0);
         genesis.hashPrevBlock = 0;
         genesis.nTime = nTime;
         genesis.vtx.push_back(txNew);
@@ -172,17 +171,16 @@ class CTestNetParams : public CMainParams {
 public:
     CTestNetParams() {
         initialWalletAddresses.clear();
-        initialWalletAddresses.push_back("TD3vSxiCtbfjXfWBh4HGkoypsMdX3p3HpR");
-        initialWalletAddresses.push_back("TB1RVz5fWUEMm8s1KaE3f1zMqT1P819LT2");
-        initialWalletAddresses.push_back("TQnaBUmFrnU46BWtNURi1pg6EPKnrogXcs");
-        initialWalletAddresses.push_back("TUHhaye7Ks8CsJDe4pF9x7jLT6fbo3TTih");
-        initialWalletAddresses.push_back("TEHwhS6oNovBwWCcdVcJxJi3KNmk97Nwv2");
-        initialWalletAddresses.push_back("TDhbxfchw81DYbkF6XtJ19SoB6EGWRvBSu");
-        initialWalletAddresses.push_back("TWV8c8fM6ZXPrKDw8RkGHEq6dXKS3JqXjA");
-        initialWalletAddresses.push_back("TVPs9RRH7SmnzZxzar29zMEsKhdHUwzSEH");
-        initialWalletAddresses.push_back("TCewWzDn69Q4eqjspzBKiW4re9B13mLeSV");
-        initialWalletAddresses.push_back("THQhux6atXEiKaGcpES8KNiuQZmABnebgy");
-
+        initialWalletAddresses.push_back("DSjHXyKyLohMfAqgCysExqd5DiFh29tqv1");
+        initialWalletAddresses.push_back("DHuGPft3AdTgkYi968dxP2u8ogxCMi8BS2");
+        initialWalletAddresses.push_back("DMq4LzAP1HENXQspfLdcP7kG7RBkhaxgPy");
+        initialWalletAddresses.push_back("DPWqhQg2Dx9RHS19jQpU1PXdEtAfzQqwPZ");
+        initialWalletAddresses.push_back("DNFXhZUmM6BrB9u47jDJvP85LbroH2T1CG");
+        initialWalletAddresses.push_back("DHFj5Su8Mo2yfqYCEUKWMYL3u478CKUtxR");
+        initialWalletAddresses.push_back("DBMKqJV3kJh8bhjvFd4hDAUpgLTtRxQsHu");
+        initialWalletAddresses.push_back("DCeWkRsA443etVaKx3bDuJvmEp1PDnxDqt");
+        initialWalletAddresses.push_back("DECLdDB4j4FUmvq6eM4bXGimRUijR5ogwa");
+        initialWalletAddresses.push_back("DR9wL3g6yR6kds4WnHweL76GGfbxysuPhu");
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
         // a large 4-byte int at any alignment.
@@ -195,19 +193,19 @@ public:
         nDefaultPort = 0xDE11;
         nRPCPort = 0xDE10;
 
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 65); // stratis test net start with T
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 196);
-        base58Prefixes[SECRET_KEY]     = std::vector<unsigned char>(1, 65 + 128);
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 30);
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 90);
+        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1, (30+98));
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x35)(0x87)(0xCF).convert_to_container<std::vector<unsigned char> >();
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >();
 
         strDataDir = "testnet";
-        unsigned int nTime = 1538662636;
+        unsigned int nTime = 1539353822;
         unsigned int nNonce = 2433759;
         unsigned int nBits = 520159231;
         int nVersion = 1;
         Genesis = CreateDeStreamGenesisBlock(nTime, nNonce, nBits, nVersion);
-        assert(hashGenesisBlock == uint256("0xac5e9afbc85e67ea5edf0116b96910526d75662ee833a70163cb3b4a6d2423e8"));
+        //assert(hashGenesisBlock == uint256("0xac5e9afbc85e67ea5edf0116b96910526d75662ee833a70163cb3b4a6d2423e8"));
         vFixedSeeds.clear();
         vSeeds.clear();
         vSeeds.push_back(CDNSSeedData("Testnode1", "testnode1.destream.io"));

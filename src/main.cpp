@@ -1423,8 +1423,9 @@ bool CBlock::DisconnectBlock(CTxDB& txdb, CBlockIndex* pindex)
 bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
 {
     // Check it again in case a previous version let a bad block in, but skip BlockSig checking
-    if (!CheckBlock(!fJustCheck, !fJustCheck, false))
-        return false;
+    if (this->GetHash()!=Params().HashGenesisBlock())
+        if (!CheckBlock(!fJustCheck, !fJustCheck, false))
+            return false;
 
     unsigned int flags = SCRIPT_VERIFY_NOCACHE;
 
@@ -1514,16 +1515,16 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
 
         mapQueuedChanges[hashTx] = CTxIndex(posThisTx, tx.vout.size());
     }
-
-    if (IsProofOfWork())
-    {
-        int64_t nReward = GetProofOfWorkReward(nFees);
-        // Check coinbase reward
-        if (vtx[0].GetValueOut() > nReward)
-            return DoS(50, error("ConnectBlock() : coinbase reward exceeded (actual=%d vs calculated=%d)",
-                   vtx[0].GetValueOut(),
-                   nReward));
-    }
+    if (this->GetHash()!=Params().HashGenesisBlock())
+        if (IsProofOfWork())
+        {
+            int64_t nReward = GetProofOfWorkReward(nFees);
+            // Check coinbase reward
+            if (vtx[0].GetValueOut() > nReward)
+                return DoS(50, error("ConnectBlock() : coinbase reward exceeded (actual=%d vs calculated=%d)",
+                       vtx[0].GetValueOut(),
+                       nReward));
+        }
     if (IsProofOfStake())
     {
         // ppcoin: coin stake tx earns reward instead of paying fee
@@ -1687,7 +1688,8 @@ bool CBlock::SetBestChainInner(CTxDB& txdb, CBlockIndex *pindexNew)
         return error("SetBestChain() : TxnCommit failed");
 
     // Add to current best branch
-    pindexNew->pprev->pnext = pindexNew;
+    if (this->GetHash()!=Params().HashGenesisBlock())
+        pindexNew->pprev->pnext = pindexNew;
 
     // Delete redundant memory transactions
     BOOST_FOREACH(CTransaction& tx, vtx)
@@ -1709,6 +1711,10 @@ bool CBlock::SetBestChain(CTxDB& txdb, CBlockIndex* pindexNew)
         if (!txdb.TxnCommit())
             return error("SetBestChain() : TxnCommit failed");
         pindexGenesisBlock = pindexNew;
+        if (!txdb.TxnBegin())
+            return error("SetBestChain() : TxnBegin failed");
+        if (!SetBestChainInner(txdb, pindexNew))
+            return error("SetBestChain() : SetBestChainInner failed");
     }
     else if (hashPrevBlock == hashBestChain)
     {

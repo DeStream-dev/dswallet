@@ -774,9 +774,8 @@ bool AppInit2(boost::thread_group& threadGroup)
             pwalletMain->SetBestChain(CBlockLocator(pindexBest));
             nWalletDBUpdated++;
         }else if (pindexBest == pindexGenesisBlock){
-            nStart = GetTimeMillis();
             pwalletMain->ScanForWalletTransactions(pindexGenesisBlock, true);
-            pwalletMain->SetBestChain(CBlockLocator(pindexBest));
+            nStart = GetTimeMillis();
         }
     } // (!fDisableWallet)
 #else // ENABLE_WALLET
