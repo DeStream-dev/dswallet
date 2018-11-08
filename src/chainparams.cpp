@@ -69,17 +69,25 @@ class CMainParams : public CChainParams {
 
 public:
     CMainParams() {
-        initialWalletAddresses.clear();
-        initialWalletAddresses.push_back("DSjHXyKyLohMfAqgCysExqd5DiFh29tqv1");
-        initialWalletAddresses.push_back("DHuGPft3AdTgkYi968dxP2u8ogxCMi8BS2");
-        initialWalletAddresses.push_back("DMq4LzAP1HENXQspfLdcP7kG7RBkhaxgPy");
-        initialWalletAddresses.push_back("DPWqhQg2Dx9RHS19jQpU1PXdEtAfzQqwPZ");
-        initialWalletAddresses.push_back("DNFXhZUmM6BrB9u47jDJvP85LbroH2T1CG");
-        initialWalletAddresses.push_back("DHFj5Su8Mo2yfqYCEUKWMYL3u478CKUtxR");
-        initialWalletAddresses.push_back("DBMKqJV3kJh8bhjvFd4hDAUpgLTtRxQsHu");
-        initialWalletAddresses.push_back("DCeWkRsA443etVaKx3bDuJvmEp1PDnxDqt");
-        initialWalletAddresses.push_back("DECLdDB4j4FUmvq6eM4bXGimRUijR5ogwa");
-        initialWalletAddresses.push_back("DR9wL3g6yR6kds4WnHweL76GGfbxysuPhu");
+        InitialWalletAddresses.clear();
+        InitialWalletAddresses.push_back("Tk4kvrDKFDsDQ3VsKimCbrokQHK885npoh");
+        InitialWalletAddresses.push_back("TuuqcMPWFFfnz4iNog24AzQHFkn5gJZLnb");
+        InitialWalletAddresses.push_back("TuV2gkePiowcpKfSyzfuw4iNntoyWo1HXD");
+        InitialWalletAddresses.push_back("TmyykwGN3TdUNgEJLrfgwUwAypLXuUcFQ7");
+        InitialWalletAddresses.push_back("TvD6tMSWLWXSGZzB1w5VBy2FCxunHhd9KS");
+        InitialWalletAddresses.push_back("TjYPYvNiyHEkzEeov32gjj2LjzJsPTDkSa");
+        InitialWalletAddresses.push_back("Tcv36pEXKhgkGN3wSZMuFddP1SASJJEH8t");
+        InitialWalletAddresses.push_back("TwYRsuD3D2SkW13dN3LJMVHp2dAxiM3dEa");
+        InitialWalletAddresses.push_back("TdAXGbFTVqw57AMxXvE9ebRZwYZVMTWHM1");
+        InitialWalletAddresses.push_back("ThHKmycqqb4dTa6hLthUU7Gv6rp9MuoyGW");
+
+        DeStreamWallets.clear();
+        DeStreamWallets.push_back("TgRwnv8yY5FDW1wUCGw8A58U45v6bGGUtZ");
+        DeStreamWallets.push_back("TninRDGBPRJ8g88MBq2j8ydHVTer7qoHr6");
+        DeStreamWallets.push_back("TtzSemvdnhZ32bNmcST9bYdDMKbpUnmoJo");
+        DeStreamWallets.push_back("TwarzhJKdRzTJ2kDDFtgKfG6XQmpLTHDHU");
+        DeStreamWallets.push_back("Tm3LJkQdLdzXHmJunb6r2pCcV8tkhLvreX");
+
         //const int64_t InitialCoins = 600000000000000000;
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -121,16 +129,18 @@ public:
         nLastPOWBlock = 12500;
     }
 
-    virtual const std::list<string> ListInitialWalletAddresses() const { return initialWalletAddresses; }
     virtual const CBlock& GenesisBlock() const { return Genesis; }
-    virtual Network NetworkID() const { return CChainParams::MAIN; }
+    virtual Network NetworkID() const { return CChainParams::DESTREAM; }
 
     virtual const vector<CAddress>& FixedSeeds() const {
         return vFixedSeeds;
     }
+
 protected:
     CBlock Genesis;
     vector<CAddress> vFixedSeeds;
+
+
     CBlock CreateDeStreamGenesisBlock(unsigned int nTime, unsigned int nNonce,
                                       unsigned int nBits, int nVersion){
         CBlock genesis;
@@ -139,11 +149,12 @@ protected:
         vin.resize(1);
         vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
         std::vector<CTxOut> vout;
-        vout.resize(initialWalletAddresses.size());
+        vout.resize(InitialWalletAddresses.size());
         int i = 0;
-        int64_t test =InitialCoins()/ListInitialWalletAddresses().size();
-        BOOST_FOREACH(string  dest, initialWalletAddresses){
-            vout[i].nValue=InitialCoins()/ListInitialWalletAddresses().size();
+
+
+        BOOST_FOREACH(string  dest, InitialWalletAddresses){
+            vout[i].nValue=InitialCoins()/InitialWalletAddresses.size();
             vout[i].scriptPubKey.SetDestination(CBitcoinAddress(dest).Get());
             i++;
         }
@@ -156,6 +167,7 @@ protected:
         genesis.nVersion = nVersion;
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         hashGenesisBlock = genesis.GetHash();
+        string _str = hashGenesisBlock.ToString();
         return genesis;
 
     }
@@ -170,17 +182,25 @@ static CMainParams mainParams;
 class CTestNetParams : public CMainParams {
 public:
     CTestNetParams() {
-        initialWalletAddresses.clear();
-        initialWalletAddresses.push_back("DSjHXyKyLohMfAqgCysExqd5DiFh29tqv1");
-        initialWalletAddresses.push_back("DHuGPft3AdTgkYi968dxP2u8ogxCMi8BS2");
-        initialWalletAddresses.push_back("DMq4LzAP1HENXQspfLdcP7kG7RBkhaxgPy");
-        initialWalletAddresses.push_back("DPWqhQg2Dx9RHS19jQpU1PXdEtAfzQqwPZ");
-        initialWalletAddresses.push_back("DNFXhZUmM6BrB9u47jDJvP85LbroH2T1CG");
-        initialWalletAddresses.push_back("DHFj5Su8Mo2yfqYCEUKWMYL3u478CKUtxR");
-        initialWalletAddresses.push_back("DBMKqJV3kJh8bhjvFd4hDAUpgLTtRxQsHu");
-        initialWalletAddresses.push_back("DCeWkRsA443etVaKx3bDuJvmEp1PDnxDqt");
-        initialWalletAddresses.push_back("DECLdDB4j4FUmvq6eM4bXGimRUijR5ogwa");
-        initialWalletAddresses.push_back("DR9wL3g6yR6kds4WnHweL76GGfbxysuPhu");
+        InitialWalletAddresses.clear();
+
+        InitialWalletAddresses.push_back("TrQk95UgnVtc2KxsobSCKQr2Q77KztpgxU");
+        InitialWalletAddresses.push_back("TdRpgTPZ3tdVqC25EspyJ4q6YpF7QV14Nd");
+        InitialWalletAddresses.push_back("TpyQja6AV2Zwy32hsmF9kHP2fdV9tajgfc");
+        InitialWalletAddresses.push_back("TkQr4bDeA67zRBs9xUQiS9qh5afEZuVFjV");
+        InitialWalletAddresses.push_back("TrHTrXdws7eKTpRNpgSt7iGCcboArTm3K9");
+        InitialWalletAddresses.push_back("TgCSSNkWMRAmD17yiMGhXMWN3XaimvKKPT");
+        InitialWalletAddresses.push_back("TnLpjZ8uLihDYSjDTMNsmsQwR42MjDm2XV");
+        InitialWalletAddresses.push_back("TxGjrPNevuKGfwoSx1bfZAsDVHhSgMY2pf");
+        InitialWalletAddresses.push_back("Tr8URuUAK6gkuqjxEMx3PcktNb3Z7iwvg7");
+        InitialWalletAddresses.push_back("ThJCSTwXLeZcGFycoNTTumPy7Gfv5oin6A");
+
+        DeStreamWallets.clear();
+        DeStreamWallets.push_back("TgRwnv8yY5FDW1wUCGw8A58U45v6bGGUtZ");
+        DeStreamWallets.push_back("TninRDGBPRJ8g88MBq2j8ydHVTer7qoHr6");
+        DeStreamWallets.push_back("TtzSemvdnhZ32bNmcST9bYdDMKbpUnmoJo");
+        DeStreamWallets.push_back("TwarzhJKdRzTJ2kDDFtgKfG6XQmpLTHDHU");
+        DeStreamWallets.push_back("Tm3LJkQdLdzXHmJunb6r2pCcV8tkhLvreX");
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
         // a large 4-byte int at any alignment.
@@ -193,14 +213,14 @@ public:
         nDefaultPort = 0xDE11;
         nRPCPort = 0xDE10;
 
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 30);
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 90);
-        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1, (30+98));
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 66);
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 128);
+        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1, (66+128));
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x35)(0x87)(0xCF).convert_to_container<std::vector<unsigned char> >();
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >();
 
         strDataDir = "testnet";
-        unsigned int nTime = 1539353822;
+        unsigned int nTime = 1540559899;
         unsigned int nNonce = 2433759;
         unsigned int nBits = 520159231;
         int nVersion = 1;
@@ -214,7 +234,7 @@ public:
         nLastPOWBlock = 0x7fffffff;
     }
 
-    virtual Network NetworkID() const { return CChainParams::TESTNET; }
+    virtual Network NetworkID() const { return CChainParams::DESTREAMTEST; }
 };
 static CTestNetParams testNetParams;
 
@@ -256,10 +276,10 @@ const CChainParams &Params() {
 
 void SelectParams(CChainParams::Network network) {
     switch (network) {
-        case CChainParams::MAIN:
+        case CChainParams::DESTREAM:
             pCurrentParams = &mainParams;
             break;
-        case CChainParams::TESTNET:
+        case CChainParams::DESTREAMTEST:
             pCurrentParams = &testNetParams;
             break;
         case CChainParams::REGTEST:
@@ -282,9 +302,9 @@ bool SelectParamsFromCommandLine() {
     if (fRegTest) {
         SelectParams(CChainParams::REGTEST);
     } else if (fTestNet) {
-        SelectParams(CChainParams::TESTNET);
+        SelectParams(CChainParams::DESTREAMTEST);
     } else {
-        SelectParams(CChainParams::MAIN);
+        SelectParams(CChainParams::DESTREAM);
     }
     return true;
 }

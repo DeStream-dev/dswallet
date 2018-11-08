@@ -98,6 +98,7 @@ public:
     }
 };
 
+
 // CreateNewBlock: create new block (without proof-of-work/proof-of-stake)
 CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFees)
 {
@@ -154,7 +155,8 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     // a transaction spammer can cheaply fill blocks using
     // 1-satoshi-fee transactions. It should be set above the real
     // cost to you of processing a transaction.
-    int64_t nMinTxFee = MIN_TX_FEE;
+
+    int64_t nMinTxFee = GetDeStreamCommission(txNew);
     if (mapArgs.count("-mintxfee"))
         ParseMoney(mapArgs["-mintxfee"], nMinTxFee);
 
@@ -185,6 +187,8 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
             bool fMissingInputs = false;
             BOOST_FOREACH(const CTxIn& txin, tx.vin)
             {
+                if (IsChangePointer(txin, tx.vout))
+                    continue;
                 // Read prev transaction
                 CTransaction txPrev;
                 CTxIndex txindex;
@@ -195,12 +199,14 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
                     // or other transactions in the memory pool.
                     if (!mempool.mapTx.count(txin.prevout.hash))
                     {
-                        LogPrintf("ERROR: mempool transaction missing input\n");
-                        if (fDebug) assert("mempool transaction missing input" == 0);
-                        fMissingInputs = true;
-                        if (porphan)
-                            vOrphan.pop_back();
-                        break;
+                        //if (!IsChangePointer(txin, tx.vout)){
+                            LogPrintf("ERROR: mempool transaction missing input\n");
+                            if (fDebug) assert("mempool transaction missing input" == 0);
+                            fMissingInputs = true;
+                            if (porphan)
+                                vOrphan.pop_back();
+                            break;
+                        //}
                     }
 
                     // Has to wait for dependencies
@@ -210,16 +216,20 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
                         vOrphan.push_back(COrphan(&tx));
                         porphan = &vOrphan.back();
                     }
-                    mapDependers[txin.prevout.hash].push_back(porphan);
-                    porphan->setDependsOn.insert(txin.prevout.hash);
-                    nTotalIn += mempool.mapTx[txin.prevout.hash].vout[txin.prevout.n].nValue;
-                    continue;
+                    //if (!IsChangePointer(txin, tx.vout)){
+                        mapDependers[txin.prevout.hash].push_back(porphan);
+                        porphan->setDependsOn.insert(txin.prevout.hash);
+                        nTotalIn += mempool.mapTx[txin.prevout.hash].vout[txin.prevout.n].nValue;
+                        continue;
+                    //}
                 }
-                int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
-                nTotalIn += nValueIn;
+                //if (!IsChangePointer(txin, tx.vout)){
+                    int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
+                    nTotalIn += nValueIn;
 
-                int nConf = txindex.GetDepthInMainChain();
-                dPriority += (double)nValueIn * nConf;
+                    int nConf = txindex.GetDepthInMainChain();
+                    dPriority += (double)nValueIn * nConf;
+                //}
             }
             if (fMissingInputs) continue;
 
@@ -367,6 +377,8 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
             pblock->UpdateTime(pindexPrev);
         pblock->nNonce         = 0;
     }
+
+    string _str = pblock->GetHash().ToString();
 
     return pblock.release();
 }
@@ -555,6 +567,7 @@ void ThreadStakeMiner(CWallet *pwallet)
         //
         int64_t nFees;
         auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+        //pwallet->_TesHash.push_back("Hash: "+pblock->GetHash().ToString());
         if (!pblock.get())
             return;
 
@@ -563,8 +576,10 @@ void ThreadStakeMiner(CWallet *pwallet)
         {
             SetThreadPriority(THREAD_PRIORITY_NORMAL);
             CheckStake(pblock.get(), *pwallet);
+            pwallet->_TesHash.push_back("CheckStake : "+pblock->GetHash().ToString());
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
             MilliSleep(500);
+            int qwe=1;
         }
         else
             MilliSleep(nMinerSleep);

@@ -81,8 +81,10 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
     else
     {
         bool fAllFromMe = true;
-        BOOST_FOREACH(const CTxIn& txin, wtx.vin)
-            fAllFromMe = fAllFromMe && wallet->IsMine(txin);
+        BOOST_FOREACH(const CTxIn& txin, wtx.vin){
+            if (!IsChangePointer(txin, wtx.vout))
+                fAllFromMe = fAllFromMe && wallet->IsMine(txin);
+        }
 
         bool fAllToMe = true;
         BOOST_FOREACH(const CTxOut& txout, wtx.vout)

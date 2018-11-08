@@ -44,9 +44,9 @@ static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 40;
 /** The maximum number of entries in an 'inv' protocol message */
 static const unsigned int MAX_INV_SZ = 50000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
-static const int64_t MIN_TX_FEE = 10000;
+static int64_t MIN_TX_FEE = 10000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
-static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
+static int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 /** No amount larger than this (in satoshi) is valid */
 static const int64_t MAX_MONEY = std::numeric_limits<int64_t>::max();
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
@@ -83,6 +83,7 @@ extern unsigned int nStakeMinAge;
 extern unsigned int nNodeLifespan;
 extern int nCoinbaseMaturity;
 extern int nBestHeight;
+extern int DeStreamWalletIndex;
 extern uint256 nBestChainTrust;
 extern uint256 nBestInvalidTrust;
 extern uint256 hashBestChain;
@@ -125,7 +126,8 @@ void ResendWalletTransactions(bool fForce = false);
 void RegisterNodeSignals(CNodeSignals& nodeSignals);
 /** Unregister a network node */
 void UnregisterNodeSignals(CNodeSignals& nodeSignals);
-
+bool IsChangePointer(CTxIn txin, vector<CTxOut> vout);
+string DeStreamWalletNext();
 void PushGetBlocks(CNode* pnode, CBlockIndex* pindexBegin, uint256 hashEnd);
 
 bool ProcessBlock(CNode* pfrom, CBlock* pblock);
@@ -220,6 +222,8 @@ enum GetMinFee_mode
 
 typedef std::map<uint256, std::pair<CTxIndex, CTransaction> > MapPrevTx;
 
+int64_t GetDeStreamCommission(const CTransaction& tx);
+
 int64_t GetMinFee(const CTransaction& tx, unsigned int nBlockSize = 1, enum GetMinFee_mode mode = GMF_BLOCK, unsigned int nBytes = 0);
 
 /** The basic transaction that is broadcasted on the network and contained in
@@ -279,15 +283,48 @@ public:
         return SerializeHash(*this);
     }
 
-    bool IsCoinBase() const
+    bool IsCoinBaseGenesisBlock() const
     {
         return (vin.size() == 1 && vin[0].prevout.IsNull() && vout.size() >= 1);
     }
 
+    bool IsCoinBase() const
+    {
+        int _size = 0;
+        BOOST_FOREACH(const CTxIn& txin, vin){
+            if (!IsChangePointer(txin, vout)){
+                _size++;
+                if (_size>1)
+                    return false;
+                if (_size==1){
+                    if (!txin.prevout.IsNull())
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        //return (vin.size() == 1 && vin[0].prevout.IsNull() && vout.size() >= 1);
+        return (vout.size() >= 1);
+    }
+
     bool IsCoinStake() const
     {
+        int _size = 0;
+        BOOST_FOREACH(const CTxIn& txin, vin){
+            if (!IsChangePointer(txin, vout)){
+                _size++;
+                if (_size==1){
+                    if (txin.prevout.IsNull())
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
         // ppcoin: the coin stake transaction is marked with the first output empty
-        return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
+        //return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
+        return (vout.size() >= 2 && vout[0].IsEmpty());
     }
 
     /** Amount of bitcoins spent by this transaction.
@@ -840,15 +877,18 @@ public:
 
     bool DisconnectBlock(CTxDB& txdb, CBlockIndex* pindex);
     bool ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck=false);
+    bool ConnectGenesisBlock(CTxDB& txdb, CBlockIndex* pindex);
     bool ReadFromDisk(const CBlockIndex* pindex, bool fReadTransactions=true);
     bool SetBestChain(CTxDB& txdb, CBlockIndex* pindexNew);
     bool AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const uint256& hashProof);
+    bool CheckGenesisBlock() const;
     bool CheckBlock(bool fCheckPOW=true, bool fCheckMerkleRoot=true, bool fCheckSig=true) const;
     bool AcceptBlock();
     bool SignBlock(CWallet& keystore, int64_t nFees);
     bool CheckBlockSignature() const;
 
 private:
+    bool SetGenesisBlockToChain(CTxDB& txdb, CBlockIndex *pindexNew);
     bool SetBestChainInner(CTxDB& txdb, CBlockIndex *pindexNew);
 };
 

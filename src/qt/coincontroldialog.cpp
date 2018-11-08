@@ -413,6 +413,7 @@ QString CoinControlDialog::getPriorityLabel(double dPriority)
 
 void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
 {
+
     if (!model) return;
 
     // nPayAmount
@@ -474,7 +475,7 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
         }
         else nBytesInputs += 148;
     }
-    
+
     // calculation
     if (nQuantity > 0)
     {
@@ -484,7 +485,7 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
         // Priority
         dPriority = dPriorityInputs / nBytes;
         sPriorityLabel = CoinControlDialog::getPriorityLabel(dPriority);
-        
+        nTransactionFee = GetDeStreamCommission(txDummy);
         // Fee
         int64_t nFee = nTransactionFee * (1 + (int64_t)nBytes / 1000);
         

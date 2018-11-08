@@ -90,6 +90,8 @@ private:
     int nWalletMaxVersion;
 
 public:
+    std::vector<string> _TesHash;
+    std::vector<int64_t> _Reward;
     /// Main wallet lock.
     /// This lock protects all the fields added by CWallet
     ///   except for:

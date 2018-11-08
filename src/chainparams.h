@@ -19,6 +19,7 @@ typedef unsigned char MessageStartChars[MESSAGE_START_SIZE];
 
 class CAddress;
 class CBlock;
+class CBitcoinAddress;
 
 struct CDNSSeedData {
     string name, host;
@@ -36,10 +37,9 @@ class CChainParams
 {
 public:
     enum Network {
-        MAIN,
-        TESTNET,
+        DESTREAM,
+        DESTREAMTEST,
         REGTEST,
-
         MAX_NETWORK_TYPES
     };
 
@@ -53,7 +53,6 @@ public:
         MAX_BASE58_TYPES
     };
 
-    const std::list<string> ListInitialWalletAddresses() const { return initialWalletAddresses; }
     const int64_t InitialCoins() const { return initialCoins; }
     const uint256& HashGenesisBlock() const { return hashGenesisBlock; }
     const MessageStartChars& MessageStart() const { return pchMessageStart; }
@@ -70,11 +69,15 @@ public:
     virtual const vector<CAddress>& FixedSeeds() const = 0;
     int RPCPort() const { return nRPCPort; }
     int LastPOWBlock() const { return nLastPOWBlock; }
+    std::vector<string> DeStreamWallets;
+    int DeStreamWalletIndex = 0;
 protected:
     CChainParams() {};
 
-    std::list<string> initialWalletAddresses;
+    std::list<string> InitialWalletAddresses;
+
     const int64_t initialCoins = 600000000000000000;
+
 
     uint256 hashGenesisBlock;
     MessageStartChars pchMessageStart;
@@ -107,7 +110,7 @@ bool SelectParamsFromCommandLine();
 
 inline bool TestNet() {
     // Note: it's deliberate that this returns "false" for regression test mode.
-    return Params().NetworkID() == CChainParams::TESTNET;
+    return Params().NetworkID() == CChainParams::DESTREAMTEST;
 }
 
 #endif

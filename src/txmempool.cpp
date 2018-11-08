@@ -34,7 +34,8 @@ bool CTxMemPool::addUnchecked(const uint256& hash, CTransaction &tx)
     {
         mapTx[hash] = tx;
         for (unsigned int i = 0; i < tx.vin.size(); i++)
-            mapNextTx[tx.vin[i].prevout] = CInPoint(&mapTx[hash], i);
+            if (tx.vin[i].prevout.hash != 0)
+                mapNextTx[tx.vin[i].prevout] = CInPoint(&mapTx[hash], i);
         nTransactionsUpdated++;
     }
     return true;

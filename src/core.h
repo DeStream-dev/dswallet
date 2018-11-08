@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 class CTransaction;
+class CTxOut;
 
 /** An outpoint - a combination of a transaction hash and an index n into its vout */
 class COutPoint
